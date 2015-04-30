@@ -22,14 +22,21 @@
            .endro
 
 ; Organize variables:
-           ; Variables are reset to 0 as part of the general memory 
+           ; Variables are reset to 0 as part of the general memory
            ; initialization.
            .enum $c000 export
            SATBuffer dsb 32 + 64
+           
            FrameInterruptFlag db
            VDPStatus db
            Joystick1 db
            Joystick2 db
+
+           Arthur_State db
+           Arthur_X db
+           Arthur_Y db
+           Arthur_Frame db
+           Arthur_Timer db
 
            Hub_GameState db
            Hub_Status db
@@ -144,7 +151,6 @@ _0:        ; Initialize level.
            ld a,%10100000
            ld b,1
            call SetRegister
-
 
            ; Load Arthur's tiles @ index 257.
            ld hl,$2020
