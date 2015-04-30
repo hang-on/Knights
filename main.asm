@@ -149,7 +149,7 @@ _0:        ; Initialize level.
            ; Load Arthur's tiles @ index 257.
            ld hl,$2020
            call PrepareVRAM
-           ld hl,Arthur_Standing_Tiles
+           ld hl,ArthurStanding_TileBlock
            ld bc,27 * 32
            call LoadVRAM
 

@@ -45,5 +45,5 @@ RegisterInitValues:
 
            Arthur_Palette:
            .include "Arthur_Palette.inc"
-           Arthur_Standing_Tiles:
-           .include "Arthur_Standing_Tiles.inc"
+           ArthurStanding_TileBlock:
+           .include "ArthurStanding_TileBlock.inc"
