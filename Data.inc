@@ -47,13 +47,8 @@ RegisterInitValues:
            .include "Arthur_Palette.inc"
            ArthurStanding_TileBlock:
            .include "ArthurStanding_TileBlock.inc"
+
            ArthurStanding_SATPackage:
-           .db 27 16 48    ; amount of hwsprites, x-offset, y-offset.
-           .db 8 8 8 16 8 24 8 32 16 32 0 40 8 40 16 40 24 40
-           .db 8 48 16 48 24 48 8 56 16 56 24 56 0 64 8 64 16 64 24 64
-           .db 0 72 8 72 16 72 24 72 0 80 8 80 16 80 24 80
-           
-           ArthurStanding_TestPackage:
            .db 27 ; amount of hwsprites
            .db 88 ; y-offset
            .db 8  ; x-offset

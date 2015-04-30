@@ -253,12 +253,9 @@ _1:        ; Run level.
         +:
 
            ; Put standing Arthur in SATBuffer.
-
-
-           ld hl,ArthurStanding_TestPackage
+           ld hl,ArthurStanding_SATPackage
            ld de,SATBuffer
-           ld b,(hl)
-           push bc
+           ld c,(hl)
            inc hl
            ; Generate the reference point.
            ld b,(hl)
@@ -271,9 +268,10 @@ _1:        ; Run level.
            sub b
            ld (Arthur_SpriteReferencePointX),a
            inc hl
-           pop bc
-
-        -: ld c,(hl) ; get y
+           ld b,c
+           
+           ; Update the vertical positions.
+        -: ld c,(hl) ; get y-offset from SATPackage.
            ld a,(Arthur_SpriteReferencePointY)
            add a,c
            ld (de),a
@@ -281,19 +279,19 @@ _1:        ; Run level.
            inc hl
            djnz -
 
+           ; Update the horizontal positions and charcodes.
            ld de,SATBuffer+32
            ld b,27
-        -: ld c,(hl) ; get x
+        -: ld c,(hl) ; get x-offset from SATPackage
            ld a,(Arthur_SpriteReferencePointX)
            add a,c
            ld (de),a
            inc de
-           ld a,b
-           ld (de),a
+           ld a,b ; get charcode.
+           ld (de),a ; write it.
            inc de
            inc hl
            djnz -
-
 
            ret
 _2:
