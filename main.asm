@@ -101,9 +101,9 @@ InitializeFramework:
            djnz -
 
            ; Set the border color.
-           ; ld a,%11110000
-           ; ld b,7
-           ; call SetRegister
+           ld a,%11110001
+           ld b,7
+           call SetRegister
 
            ; Start main loop in state 0.
            ld a,0
@@ -139,11 +139,39 @@ Loader:
            call GetVector
            jp (hl)
 
-_0:        ;
+_0:        ; Initialize level.
+           ; Disable display.
+           ld a,%10100000
+           ld b,1
+           call SetRegister
+
+
+           ; Load Arthur's tiles @ index 257.
+           ld hl,$2020
+           call PrepareVRAM
+           ld hl,Arthur_Standing_Tiles
+           ld bc,27 * 32
+           call LoadVRAM
+
+           ; Load playfield/background colors into bank 1.
+           ;ld hl,$c000
+           ;call PrepareVRAM
+           ;ld hl,PlayfieldPalette
+           ;ld bc,14
+           ;call LoadVRAM
+
+           ; Load sprite colors into bank 2.
+           ld hl,$c010
+           call PrepareVRAM
+           ld hl,Arthur_Palette
+           ld bc,12
+           call LoadVRAM
+
+
            ret
 
 
-_1:
+_1:        ; Run level.
            ; Enable display.
            ld a,%11100000
            ld b,1

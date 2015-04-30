@@ -40,3 +40,10 @@ RegisterInitValues:
 
            .db $ff         ; reg. 10, raster line interrupt.
                            ; turn off line int. requests.
+
+; Arthur sprite assets:
+
+           Arthur_Palette:
+           .include "Arthur_Palette.inc"
+           Arthur_Standing_Tiles:
+           .include "Arthur_Standing_Tiles.inc"
