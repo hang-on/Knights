@@ -176,6 +176,19 @@ _1:        ; Run level.
            ld a,%11100000
            ld b,1
            call SetRegister
+           
+           ; Load 32 hwsprites' vertical positions.
+           ld hl,$3f00
+           call PrepareVRAM
+           ld hl,SATBuffer
+           call TurboLoad32
+
+           ; Load 32 hwsprites' horizontal positions and charcodes.
+           ld hl,$3f80
+           call PrepareVRAM
+           ld hl,SATBuffer+32
+           call TurboLoad64
+
            ret
 
 _2:

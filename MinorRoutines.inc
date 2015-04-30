@@ -112,3 +112,30 @@ ReadJoysticks:
            ld (Joystick2),a
            ret
 .ends
+
+; --------------------------------------------------------------
+.section "Turbo Load 32 bytes" free
+; --------------------------------------------------------------
+; Turbo load 32 bytes to VDP data port.
+; HL = Pointer to data.
+TurboLoad32:
+           ld c,$be
+           .rept 32
+           outi
+           .endr
+           ret
+.ends
+
+; --------------------------------------------------------------
+.section "Turbo Load 64 bytes" free
+; --------------------------------------------------------------
+; Turbo load 64 bytes to VDP data port.
+; HL = Pointer to data.
+TurboLoad64:
+           ld c,$be
+           .rept 64
+           outi
+           .endr
+           ret
+.ends
+
