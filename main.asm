@@ -253,60 +253,33 @@ _1:        ; Run level.
         +:
 
            ; Put standing Arthur in SATBuffer.
-           ld hl,ArthurStanding_SATPackage + 3
-           ld ix,SATBuffer
-           ld iy,SATBuffer+32
-           ld b,27
-           ld c,1
--:         ld d,(hl) ; get x
-           ld a,(Arthur_X)
-           add a,d
-           ld (iy+0),a
-           ld (iy+1),c
-           inc hl
-           ld d,(hl) ; get y
-           ld a,(Arthur_Y)
-           add a,d
-           ld (ix+0),a
-           inc hl
-           inc ix
-           inc iy
-           inc iy
-           inc c
-           djnz -
-
-/*
-           ; Put standing Arthur on screen - experimental
-           ld hl,ArthurStanding_TestPackage
+           ld hl,ArthurStanding_TestPackage + 3
            ld de,SATBuffer
-           ld b,(hl); amount of hw sprites
-           push bc
-           inc hl
-           ld a,(hl)
-           ld (Arthur_SpriteReferencePointY),a
-           inc hl
-           ld a,(hl)
-           ld (Arthur_SpriteReferencePointX),a
-           inc hl
-
-        -: ld c,(hl)
-           ld a,(Arthur_SpriteReferencePointY)
+           ld b,27
+        -: ld c,(hl) ; get y
+           ld a,(Arthur_Y)
+           ; sub offset?
+           add a,c
            ld (de),a
-           inc hl
            inc de
+           inc hl
            djnz -
-           pop bc ; get amount of hwsprites
+
            ld de,SATBuffer+32
-        -: ld a,(hl)
+           ld b,27
+        -: ld c,(hl) ; get x
+           ld a,(Arthur_X)
+           ; sub offset?
+           add a,c
            ld (de),a
            inc de
            ld a,b
            ld (de),a
-           inc hl
            inc de
+           inc hl
            djnz -
 
-*/
+
            ret
 _2:
 _3:
