@@ -229,17 +229,42 @@ _0:        ; Initialize level.
            ret
 
 _1:        ; Run level.
+           
+           ld a,(Joystick1)
+           bit 2,a
+           jp nz,+
+           ld hl,Arthur_X
+           dec (hl)
+        +: bit 3,a
+           jp nz,+
+           ld hl,Arthur_X
+           inc (hl)
+        +: bit 0,a
+           jp nz,+
+           ld hl,Arthur_Y
+           dec (hl)
+        +: bit 1,a
+           jp nz,+
+           ld hl,Arthur_Y
+           inc (hl)
+        +:
+
+
            ; Put standing Arthur in SATBuffer.
            ld hl,ArthurStanding_SATPackage + 3
            ld ix,SATBuffer
            ld iy,SATBuffer+32
            ld b,27
            ld c,1
--:         ld a,(hl) ; get x
+-:         ld d,(hl) ; get x
+           ld a,(Arthur_X)
+           add a,d
            ld (iy+0),a
            ld (iy+1),c
            inc hl
-           ld a,(hl) ; get y
+           ld d,(hl) ; get y
+           ld a,(Arthur_Y)
+           add a,d
            ld (ix+0),a
            inc hl
            inc ix
