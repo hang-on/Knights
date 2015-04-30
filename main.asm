@@ -229,7 +229,8 @@ _0:        ; Initialize level.
            ret
 
 _1:        ; Run level.
-           
+
+           ; Update Arthur's x,y coordinates, based on joystick input.
            ld a,(Joystick1)
            bit 2,a
            jp nz,+
@@ -249,7 +250,7 @@ _1:        ; Run level.
            inc (hl)
         +:
 
-
+/*
            ; Put standing Arthur in SATBuffer.
            ld hl,ArthurStanding_SATPackage + 3
            ld ix,SATBuffer
@@ -272,7 +273,32 @@ _1:        ; Run level.
            inc iy
            inc c
            djnz -
+*/
 
+           ; Put standing Arthur on screen - experimental
+           ld hl,ArthurStanding_TestPackage
+           ld de,SATBuffer
+           ld b,(hl); amount of hw sprites
+           push bc
+           inc hl
+           ; forward over offset
+           inc hl
+           inc hl
+        -: ld a,(hl)
+           ld (de),a
+           inc hl
+           inc de
+           djnz -
+           pop bc ; get amount of hwsprites
+           ld de,SATBuffer+32
+        -: ld a,(hl)
+           ld (de),a
+           inc de
+           ld a,b
+           ld (de),a
+           inc hl
+           inc de
+           djnz -
            ret
 _2:
 _3:
