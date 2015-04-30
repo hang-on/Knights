@@ -8,28 +8,35 @@ This is an attempt at working with big sprites.
 
 ##Graphics format
 The player sprite is Arthur. The sprite buffer is currently 32 sprites wide.
-The sprite buffer is reset to all 0's on each main loop cycle. It is then
-populated by loading a SATPackage into it. At every vblank, the SATBuffer is 
-loaded into vram.
+The sprite buffer is then populated by loading a SATPackage into it. At vblank, 
+the SATBuffer can be loaded into vram SAT.
+
+The sprites are based on the SNES port. Ripped by Belial and downloaded from 
+http://www.spriters-resource.com/snes/knightsround/.
+
+The sprite sheet is resized to 80% in Photoshop, with the "Preserve hard 
+edges"-option. The colors are then tweaked to fit into the SMS color space.
 
 Each frame of animation is understood and developed by the following concepts:
 
-* The Layout is an excerpt from the total sprite sheet. This excerpt contains 
-  particular frame of the sprite's animation (i.e. Arthur Standing).
-  
-  The sprite is arranged to fit into a grid of tiles (8x8 pixels). Every
-  non-transparent tile is then indexed from 0 to .., along with 2D coordinates
-  that specifies the offset from a given reference point. This reference point
-  is usually the top left corner of the top left tile, even if this tile is
-  transparent. The Frame Layout Map is for the programmer's reference only. It
-  is used to make The Arrangement and later the SATPackage.
-  
+* The Image is a cropped and possibly color-edited .bmp image of the current 
+  frame. The Image is taken from the scaled sprite sheet. The sprite is 
+  arranged to fit into a grid of tiles (8x8 pixels).
+
+* The Layout is an annotated version of The Image. Every non-transparent tile 
+  is then indexed from 0 to .., along with 2D coordinates that specifies the 
+  offset from a given reference point. This reference point is usually the top 
+  left corner of the top left tile, even if this tile is transparent. The 
+  Layout is used for the programmer's reference only. It is used to make The 
+  Raw Tileblock and later the SATPackage.
+
   Each non-transparent tile on the Layout will be assigned to a hwsprite.
 
-* The Arrangement: The .bmp file with the tiles ordered according to
-  the indexing done in the Layout.
+* The Raw Tileblock: The .bmp file with the tiles ordered according
+  to the indexing done in the Layout. Ready to be processed by BMP2Tile. It is 
+  made from The Image.
 
-* The TileData: The .inc file made by BMP2Tile containing data in the
+* The TileBlock: The .inc file made by BMP2Tile containing data in the
   32-bytes per tile format of the SMS VDP.
 
 * The SATPackage is a data format for arranging the current frame of a
@@ -41,6 +48,12 @@ Each frame of animation is understood and developed by the following concepts:
     - Next hwsprites' x,y offset..., and so on, for all the hwsprites in the
       current frame.
 
+Example elements of frame Arthur Standing:
+* ArthurStanding_Image
+* ArthurStanding_Layout
+* ArthurStanding_RawTileBlock
+* ArthurStanding_TileBlock
+* ArthurStanding_SATPackage
 
 ##Hub_GameState
 The overall state of the game is controlled by the 1 byte variable
