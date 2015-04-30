@@ -127,7 +127,8 @@ InitializeFramework:
 ; -----------------------------------------------------------------------------
 MainLoop:                                                                     ;
            call WaitForFrameInterrupt                                         ;
-           call Loader                                                        ;
+           call Loader
+           call Arthur                                                        ;
            call Hub                                                           ;                                                               ;
            call PSGSFXFrame                                                   ;
            call PSGFrame                                                      ;
@@ -182,7 +183,7 @@ _1:        ; Run level.
            ld a,%11100000
            ld b,1
            call SetRegister
-           
+
            ; Load 32 hwsprites' vertical positions.
            ld hl,$3f00
            call PrepareVRAM
@@ -206,6 +207,59 @@ _7:
 _8:
 
            _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6 _7 _8
+.ends
+
+
+; -----------------------------------------------------------------------------
+.section "Arthur" free
+; -----------------------------------------------------------------------------
+Arthur:
+
+           ; Switch according to game state.
+           ld a,(Hub_GameState)
+           ld de,_SwitchVectors
+           call GetVector
+           jp (hl)
+
+_0:        ; Initialize level.
+           ; Place Arthur sprite on default location.
+           ld a,100
+           ld (Arthur_X),a
+           ld (Arthur_Y),a
+           ret
+
+_1:        ; Run level.
+           ; Put standing Arthur in SATBuffer.
+           ld hl,ArthurStanding_SATPackage + 3
+           ld ix,SATBuffer
+           ld iy,SATBuffer+32
+           ld b,27
+           ld c,1
+-:         ld a,(hl) ; get x
+           ld (iy+0),a
+           ld (iy+1),c
+           inc hl
+           ld a,(hl) ; get y
+           ld (ix+0),a
+           inc hl
+           inc ix
+           inc iy
+           inc iy
+           inc c
+           djnz -
+
+           ret
+_2:
+_3:
+_4:
+_5:
+_6:
+_7:
+_8:
+
+           ret
+           _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6 _7 _8
+
 .ends
 
 
