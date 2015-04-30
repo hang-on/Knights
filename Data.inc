@@ -55,8 +55,8 @@ RegisterInitValues:
            
            ArthurStanding_TestPackage:
            .db 27 ; amount of hwsprites
-           .db 48 ; y-offset
-           .db 16 ; x-offset
+           .db 88 ; y-offset
+           .db 8  ; x-offset
            ; now all the vpos, reverse order
            .db 80 80 80 80 72 72 72 72 64 64 64 64 56 56 56 48 48 48
            .db 40 40 40 40 32 32 24 16 8
