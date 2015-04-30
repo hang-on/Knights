@@ -37,6 +37,8 @@
            Arthur_Y db
            Arthur_Frame db
            Arthur_Timer db
+           Arthur_SpriteReferencePointY db
+           Arthur_SpriteReferencePointX db
 
            Hub_GameState db
            Hub_Status db
@@ -250,7 +252,6 @@ _1:        ; Run level.
            inc (hl)
         +:
 
-/*
            ; Put standing Arthur in SATBuffer.
            ld hl,ArthurStanding_SATPackage + 3
            ld ix,SATBuffer
@@ -273,18 +274,23 @@ _1:        ; Run level.
            inc iy
            inc c
            djnz -
-*/
 
+/*
            ; Put standing Arthur on screen - experimental
            ld hl,ArthurStanding_TestPackage
            ld de,SATBuffer
            ld b,(hl); amount of hw sprites
            push bc
            inc hl
-           ; forward over offset
+           ld a,(hl)
+           ld (Arthur_SpriteReferencePointY),a
            inc hl
+           ld a,(hl)
+           ld (Arthur_SpriteReferencePointX),a
            inc hl
-        -: ld a,(hl)
+
+        -: ld c,(hl)
+           ld a,(Arthur_SpriteReferencePointY)
            ld (de),a
            inc hl
            inc de
@@ -299,6 +305,8 @@ _1:        ; Run level.
            inc hl
            inc de
            djnz -
+
+*/
            ret
 _2:
 _3:
