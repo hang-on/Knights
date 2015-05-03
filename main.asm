@@ -158,7 +158,7 @@ _0:        ; Initialize level.
            ; Load Arthur's tiles @ index 257.
            ld hl,$2020
            call PrepareVRAM
-           ld hl,ArthurStanding_TileBlock
+           ld hl,ArthurWalking1_TileBlock
            ld bc,27 * 32
            call LoadVRAM
 
@@ -253,7 +253,7 @@ _1:        ; Run level.
         +:
 
            ; Put standing Arthur in SATBuffer.
-           ld hl,ArthurStanding_SATPackage
+           ld hl,ArthurWalking1_SATPackage
            ld de,SATBuffer
            ld c,(hl)
            inc hl

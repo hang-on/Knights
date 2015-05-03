@@ -58,3 +58,18 @@ RegisterInitValues:
            ; all the hpos, reverse order
            .db 24 16 8 0 24 16 8 0 24 16 8 0 24 16 8 24 16 8
            .db 24 16 8 0 16 8 8 8 8
+
+
+           ArthurWalking1_TileBlock:
+           .include "ArthurWalking1_TileBlock.inc"
+
+           ArthurWalking1_SATPackage:
+           .db 25 ; amount of hwsprites
+           .db 1 ; y-offset
+           .db 1 ; x-offset
+           ; now all the vpos, reverse order
+           .db 48 48 48 48 40 40 40 40 32 32 32 32 24 24 24 24
+           .db 16 16 16 16 8 8 8 0 0
+           ; all the hpos, reverse order
+           .db 24 16 8 0 24 16 8 0 24 16 8 0 24 16 8 0
+           .db 24 16 8 0 16 8 0 16 8
