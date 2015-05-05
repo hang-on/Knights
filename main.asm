@@ -157,14 +157,6 @@ _0:        ; Initialize level.
            ld b,1
            call SetRegister
 
-           ; Load sequence 0 frame 0 tiles @ index 257.
-           ; For frame 0 (it is a single frame sprite).
-           ld hl,$2020
-           call PrepareVRAM
-           ld hl,ArthurWalking_Frame0_Tiles
-           ld bc,26 * 32
-           call LoadVRAM
-
            ; Load sprite colors into bank 2.
            ld hl,$c010
            call PrepareVRAM
@@ -177,6 +169,20 @@ _0:        ; Initialize level.
 
 
 _1:        ; Run level.
+
+           ; See if Arthur wants us to load some new tiles.
+           ld a,(Arthur_Status)
+           bit 0,a
+           jp z,+
+           ; Load sequence 0 frame 0 tiles @ index 257.
+           ; For frame 0 (it is a single frame sprite).
+           ld hl,$2020
+           call PrepareVRAM
+           ld hl,ArthurWalking_Frame0_Tiles
+           ld bc,26 * 32
+           call LoadVRAM
+        +:
+
            ; Enable display.
            ld a,%11100000
            ld b,1
@@ -227,6 +233,11 @@ _0:        ; Initialize level.
            ret
 
 _1:        ; Run level.
+
+           ; Toggle the status flags.
+           ld a,(Arthur_Status)
+           and %11111110   ; reset Loader flag.
+           ld (Arthur_Status),a
 
            ; Update Arthur's x,y coordinates, based on joystick input.
            ld a,(Joystick1)
