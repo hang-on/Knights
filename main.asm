@@ -37,8 +37,8 @@
            Arthur_Y db
            Arthur_Frame db
            Arthur_Timer db
-           Arthur_SpriteReferencePointY db
-           Arthur_SpriteReferencePointX db
+           Arthur_GridX db
+           Arthur_GridY db
 
            Hub_GameState db
            Hub_Status db
@@ -155,25 +155,19 @@ _0:        ; Initialize level.
            ld b,1
            call SetRegister
 
-           ; Load Arthur's tiles @ index 257.
+           ; Load sequence 0 frame 0 tiles @ index 257.
+           ; For frame 0 (it is a single frame sprite).
            ld hl,$2020
            call PrepareVRAM
-           ld hl,ArthurWalking1_TileBlock
-           ld bc,27 * 32
+           ld hl,ArthurWalking_Frame0_TileBlock
+           ld bc,26 * 32
            call LoadVRAM
-
-           ; Load playfield/background colors into bank 1.
-           ;ld hl,$c000
-           ;call PrepareVRAM
-           ;ld hl,PlayfieldPalette
-           ;ld bc,14
-           ;call LoadVRAM
 
            ; Load sprite colors into bank 2.
            ld hl,$c010
            call PrepareVRAM
-           ld hl,Arthur_Palette
-           ld bc,12
+           ld hl,SpritePalette
+           ld bc,11
            call LoadVRAM
 
 
@@ -252,47 +246,13 @@ _1:        ; Run level.
            inc (hl)
         +:
 
-           ; Put standing Arthur in SATBuffer.
-           ld hl,ArthurWalking1_SATPackage
-           ld de,SATBuffer
-           ld c,(hl)
-           inc hl
-           ; Generate the reference point.
-           ld b,(hl)
-           ld a,(Arthur_Y)
-           sub b
-           ld (Arthur_SpriteReferencePointY),a
-           inc hl
-           ld b,(hl)
+           ; Update the player sprite in the sprite buffer.
+           ld hl,Sequence0_Frame0_Offset
            ld a,(Arthur_X)
-           sub b
-           ld (Arthur_SpriteReferencePointX),a
-           inc hl
-           ld b,c
-           
-           ; Update the vertical positions.
-        -: ld c,(hl) ; get y-offset from SATPackage.
-           ld a,(Arthur_SpriteReferencePointY)
-           add a,c
-           ld (de),a
-           inc de
-           inc hl
-           djnz -
-
-           ; Update the horizontal positions and charcodes.
-           ld de,SATBuffer+32
-           ld b,27
-        -: ld c,(hl) ; get x-offset from SATPackage
-           ld a,(Arthur_SpriteReferencePointX)
-           add a,c
-           ld (de),a
-           inc de
-           ld a,b ; get charcode.
-           ld (de),a ; write it.
-           inc de
-           inc hl
-           djnz -
-
+           ld d,a
+           ld a,(Arthur_Y)
+           ld e,a
+           call UpdateSprite
            ret
 _2:
 _3:
@@ -304,6 +264,78 @@ _8:
 
            ret
            _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6 _7 _8
+
+UpdateSprite:
+           ; Update the sprite representing a game object (i.e. the player).
+           ; HL = pointer to frame data block (offsets, layout, tiles).
+           ; D = Object X position (i.e. Player_X), E = Object Y position.
+
+           ; 1: Set the x,y coordinates of the layout grid top left corner.
+           ; The grid is offset from the object's x,y coordinates.
+           ld hl,Sequence0_Frame0_Offset
+           ld b,(hl)
+           ld a,(Arthur_X)
+           sub b
+           ld (Arthur_GridX),a
+           inc hl
+           ld b,(hl)
+           ld a,(Arthur_Y)
+           sub b
+           ld (Arthur_GridY),a
+
+           ; 2: Push cell numbers to the stack.
+           ; Parse the layout table for the given frame, and push the cell
+           ; number to the stack every time we come across a cell that will
+           ; recieve a hwprite. When we are done, we thus know how many
+           ; hwsprites we need to process in step 3.
+           ld hl,Sequence0_Frame0_Layout
+           ld e,0          ; Cell counter.
+           ld d,0          ; Hwsprite counter.
+           ld c,0          ; Row counter.
+       --: ld b,8          ; Column counter.
+           ld a,(hl)       ; Load row into A.
+        -: rlca            ; Rotate next bit into carry.
+           jp nc,+         ; If not set, skip forward.
+           inc d           ; Else if set, then increment hwsprite counter,
+           push de         ; and push current value of cell counter to stack.
+        +: inc e           ; Increment cell counter.
+           djnz -          ; Repeat for all 8 columns in the this row.
+           inc hl          ; Point to next row.
+           inc c           ; Increment row counter.
+           bit 3,c         ; Check if this row is 0-7 (layout table height).
+           jp z,--         ; If so, go back and parse this row.
+
+           ; 3) Put the sprite's hwsprites in the buffer.
+           ; Pop active cells from the stack, and convert each cell number to
+           ; y,x coordinates. Put these into the SATBuffer, along with char
+           ; codes corresponding to tiles already loaded into vram.
+           ld b,d          ; amount of hwsprites identified (and thus amount of pushes).
+           ld ix,SATBuffer ; vertical positions.
+           ld iy,SATBuffer+32; horizontal positions and char codes.
+        -: pop de
+           sla e           ; Multiply by two - grid elements are y,x pairs.
+           ld hl,OffsetGrid ; Point to offset grid lookup table.
+           ld d,0          ; Clear most significant byte, so we can get our
+           add hl,de       ; table element by adding HL and DE.
+           push hl         ; Preserve table element pointer on the stack.
+           ld a,(hl)       ; Read layout grid vpos value into A.
+           ld hl,Arthur_GridY ; Apply the frame y-offset.
+           add a,(hl)
+           ld (ix+0),a     ; Write final vpos value to SAT buffer.
+           inc ix          ; Increment pointer to SATBuffer vertcal positions.
+           pop hl          ; Retrieve table element pointer.
+           inc hl          ; Increment it, so it points to the x-coordinate.
+           ld a,(hl)       ; Read this x-coordinate, and
+           ld hl,Arthur_GridX ; apply the frame's horizontal offset.
+           add a,(hl)
+           ld (iy+0),a     ; Write final hpos value to SAT buffer.
+           ld (iy+1),b     ; Write the charcode to the SAT buffer.
+           inc iy          ; Increment pointer by two.
+           inc iy
+           djnz -          ; Do this for all the hwsprites identified in
+                           ; step 2.
+           ret
+
 
 .ends
 
