@@ -174,12 +174,15 @@ _1:        ; Run level.
            ld a,(Arthur_Status)
            bit 0,a
            jp z,+
-           ; Load sequence 0 frame 0 tiles @ index 257.
-           ; For frame 0 (it is a single frame sprite).
+           
+           ; Load tiles at Arthur_FrameDataPointer.
            ld hl,$2020
            call PrepareVRAM
-           ld hl,ArthurWalking_Frame0_Tiles
-           ld bc,26 * 32
+           ld ix,Arthur_FrameDataPointer
+           ld h,(ix+1)
+           ld l,(ix+0)
+
+           ld bc,32 * 32   ; load 32 sprites no matter what...!
            call LoadVRAM
         +:
 
@@ -230,6 +233,15 @@ _0:        ; Initialize level.
            ld a,100
            ld (Arthur_X),a
            ld (Arthur_Y),a
+
+           ; Point to frame (testing)
+           ld hl,ArthurWalking_Frame0_Tiles
+           ld de,Arthur_FrameDataPointer
+           ld a,l
+           ld (de),a
+           ld a,h
+           inc de
+           ld (de),a
            ret
 
 _1:        ; Run level.
