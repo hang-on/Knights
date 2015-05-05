@@ -48,10 +48,10 @@
            .ende
 
 ; Libray of minor routines:
-           .include "MinorRoutines.inc"
+           .include "SupportLibraries\MinorRoutines.inc"
 
 ; sverx's PSG library:
-           .include "PSGlib.inc"
+           .include "SupportLibraries\PSGlib.inc"
 
 ; Beginning of ROM:
 .bank 0 slot 0
@@ -391,9 +391,9 @@ _8:
 .bank 1 slot 1
 .section "Bank 1: Music, sfx and misc." free
 
-SFX_Wall .incbin "Wall.psg"
+SFX_Wall .incbin "Sfx\Wall.psg"
 
-IntergalacticTableTennis .incbin "IntergalacticTableTennis.psg"
+IntergalacticTableTennis .incbin "Music\IntergalacticTableTennis.psg"
 
 ReleaseNotes:
            .db "Another take on this classic Capcom game."
@@ -406,7 +406,7 @@ ReleaseNotes:
 ; -----------------------------------------------------------------------------
 .bank 2 slot 2
 .section "Bank 2: Data" free
-           .include "Data.inc"
+           .include "Bank2Data.inc"
 .ends
 
 ; -----------------------------------------------------------------------------

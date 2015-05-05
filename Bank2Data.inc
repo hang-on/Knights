@@ -45,7 +45,7 @@ RegisterInitValues:
 ; Arthur sprite assets:
 
            SpritePalette:
-           .include "SpritePalette.inc"
+           .include "Arthur\ArthurPalette.inc"
            
 /*
 Frame data block format
@@ -98,7 +98,7 @@ Frame data block format
            .db %11110000
            .db %00000000
            ArthurWalking_Frame0_TileBlock:
-           .include "ArthurWalking_Frame0_Tiles.inc"
+           .include "Arthur\ArthurWalking_Frame0_Tiles.inc"
 ; -----------------------------------------------------------------------------
 
 ; Pre-computed (vpos,hpos) offset values to be used with frame layout tables,
