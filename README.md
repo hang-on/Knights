@@ -27,8 +27,9 @@ game elements.
 | Bit   | Function                                                             |
 | :---: | :------------------------------------------------------------------- |
 | 0     | If set, the Loader will load tiles for a new frame into vram. This   |
-|       | bit is reset by Arthur object every cycle in Game_State 1.           |
+          bit is reset by Arthur object every cycle in Game_State 1.
 
+| 1     |                                                                      |
 
 ##Hub_GameState
 The overall state of the game is controlled by the 1 byte variable
