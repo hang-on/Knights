@@ -174,7 +174,7 @@ _1:        ; Run level.
            ld a,(Arthur_Status)
            bit 0,a
            jp z,+
-           
+
            ; Load tiles at Arthur_FrameDataPointer.
            ld hl,$2020
            call PrepareVRAM
@@ -235,7 +235,7 @@ _0:        ; Initialize level.
            ld (Arthur_Y),a
 
            ; Point to frame (testing)
-           ld hl,ArthurWalking_Frame0_Tiles
+           ld hl,ArthurWalking_Frame1_Tiles
            ld de,Arthur_FrameDataPointer
            ld a,l
            ld (de),a
@@ -272,7 +272,7 @@ _1:        ; Run level.
         +:
 
            ; Update the player sprite in the sprite buffer.
-           ld hl,ArthurWalking_Frame0_Offset
+           ld hl,ArthurWalking_Frame1_Offset
            ld a,(Arthur_X)
            ld d,a
            ld a,(Arthur_Y)
@@ -297,7 +297,7 @@ UpdateArthur:
 
            ; 1: Set the x,y coordinates of the layout grid top left corner.
            ; The grid is offset from the object's x,y coordinates.
-           ld hl,ArthurWalking_Frame0_Offset
+           ld hl,ArthurWalking_Frame1_Offset
            ld b,(hl)
            ld a,(Arthur_X)
            sub b
@@ -313,7 +313,7 @@ UpdateArthur:
            ; number to the stack every time we come across a cell that will
            ; recieve a hwprite. When we are done, we thus know how many
            ; hwsprites we need to process in step 3.
-           ld hl,ArthurWalking_Frame0_Layout
+           ld hl,ArthurWalking_Frame1_Layout
            ld e,0          ; Cell counter.
            ld d,0          ; Hwsprite counter.
            ld c,0          ; Row counter.

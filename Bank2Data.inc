@@ -99,6 +99,21 @@ Frame data block format
            .db %00000000
            ArthurWalking_Frame0_Tiles:
            .include "Arthur\ArthurWalking_Frame0_Tiles.inc"
+
+           ArthurWalking_Frame1_Offset:
+           .db 00 00
+           ArthurWalking_Frame1_Layout:
+           .db %01100000
+           .db %11100000
+           .db %11100000
+           .db %11110000
+           .db %11111000
+           .db %11000000
+           .db %11000000
+           .db %00000000
+           ArthurWalking_Frame1_Tiles:
+           .include "Arthur\ArthurWalking_Frame1_Tiles.inc"
+
 ; -----------------------------------------------------------------------------
 
 
