@@ -24,12 +24,6 @@ Arthur is the object controlled with player 1's joystick.
 Arthur_Status is 8 flags used by the Arthur object to communicate with the 
 game elements.
 
-| Bit   | Function                                                             |
-| :---: | :------------------------------------------------------------------- |
-| 0     | If set, the Loader will load tiles for a new frame into vram. This   |
-          bit is reset by Arthur object every cycle in Game_State 1.
-
-| 1     |                                                                      |
 
 ##Hub_GameState
 The overall state of the game is controlled by the 1 byte variable
