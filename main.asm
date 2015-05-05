@@ -35,10 +35,12 @@
            Arthur_State db
            Arthur_X db
            Arthur_Y db
-           Arthur_Frame db
+           Arthur_FrameNumber db
+           Arthur_FrameDataPointer dw
            Arthur_Timer db
            Arthur_GridX db
            Arthur_GridY db
+           Arthur_Status db
 
            Hub_GameState db
            Hub_Status db
@@ -159,7 +161,7 @@ _0:        ; Initialize level.
            ; For frame 0 (it is a single frame sprite).
            ld hl,$2020
            call PrepareVRAM
-           ld hl,ArthurWalking_Frame0_TileBlock
+           ld hl,ArthurWalking_Frame0_Tiles
            ld bc,26 * 32
            call LoadVRAM
 
@@ -247,12 +249,12 @@ _1:        ; Run level.
         +:
 
            ; Update the player sprite in the sprite buffer.
-           ld hl,Sequence0_Frame0_Offset
+           ld hl,ArthurWalking_Frame0_Offset
            ld a,(Arthur_X)
            ld d,a
            ld a,(Arthur_Y)
            ld e,a
-           call UpdateSprite
+           call UpdateArthur
            ret
 _2:
 _3:
@@ -265,14 +267,14 @@ _8:
            ret
            _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6 _7 _8
 
-UpdateSprite:
+UpdateArthur:
            ; Update the sprite representing a game object (i.e. the player).
            ; HL = pointer to frame data block (offsets, layout, tiles).
            ; D = Object X position (i.e. Player_X), E = Object Y position.
 
            ; 1: Set the x,y coordinates of the layout grid top left corner.
            ; The grid is offset from the object's x,y coordinates.
-           ld hl,Sequence0_Frame0_Offset
+           ld hl,ArthurWalking_Frame0_Offset
            ld b,(hl)
            ld a,(Arthur_X)
            sub b
@@ -288,7 +290,7 @@ UpdateSprite:
            ; number to the stack every time we come across a cell that will
            ; recieve a hwprite. When we are done, we thus know how many
            ; hwsprites we need to process in step 3.
-           ld hl,Sequence0_Frame0_Layout
+           ld hl,ArthurWalking_Frame0_Layout
            ld e,0          ; Cell counter.
            ld d,0          ; Hwsprite counter.
            ld c,0          ; Row counter.
@@ -391,13 +393,26 @@ _8:
 .bank 1 slot 1
 .section "Bank 1: Music, sfx and misc." free
 
-SFX_Wall .incbin "Sfx\Wall.psg"
+; Pre-computed (vpos,hpos) offset values to be used with frame layout tables,
+; so that hwsprites can get their SAT y,x positions from their layout table
+; cell number in a snap. A lookup table.
+           OffsetGrid:
+           .db 0 0 0 8 0 16 0 24 0 32 0 40 0 48 0 56
+           .db 8 0 8 8 8 16 8 24 8 32 8 40 8 48 8 56
+           .db 16 0 16 8 16 16 16 24 16 32 16 40 16 48 16 56
+           .db 24 0 24 8 24 16 24 24 24 32 24 40 24 48 24 56
+           .db 32 0 32 8 32 16 32 24 32 32 32 40 32 48 32 56
+           .db 40 0 40 8 40 16 40 24 40 32 40 40 40 48 40 56
+           .db 48 0 48 8 48 16 48 24 48 32 48 40 48 48 48 56
+           .db 56 0 56 8 56 16 56 24 56 32 56 40 56 48 56 56
 
-IntergalacticTableTennis .incbin "Music\IntergalacticTableTennis.psg"
+; Sound effects and music:
+           SFX_Wall: .incbin "Sfx\Wall.psg"
+           Intergalactic: .incbin "Music\Intergalactic.psg"
 
 ReleaseNotes:
-           .db "Another take on this classic Capcom game."
-           .db " Not so square!" 0
+           .db "Another take on this classic Capcom game. "
+           .db "Not so square!" 0
 
 
 .ends

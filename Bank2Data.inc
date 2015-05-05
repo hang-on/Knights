@@ -85,10 +85,10 @@ Frame data block format
 */
 
 
-; Sequence 0 frame 0 data block -----------------------------------------------
-           Sequence0_Frame0_Offset:
+; Arthur walking data block -----------------------------------------------
+           ArthurWalking_Frame0_Offset:
            .db 00 00
-           Sequence0_Frame0_Layout:
+           ArthurWalking_Frame0_Layout:
            .db %01100000
            .db %11100000
            .db %11110000
@@ -97,20 +97,8 @@ Frame data block format
            .db %11110000
            .db %11110000
            .db %00000000
-           ArthurWalking_Frame0_TileBlock:
+           ArthurWalking_Frame0_Tiles:
            .include "Arthur\ArthurWalking_Frame0_Tiles.inc"
 ; -----------------------------------------------------------------------------
 
-; Pre-computed (vpos,hpos) offset values to be used with frame layout tables,
-; so that hwsprites can get their SAT y,x positions from their layout table
-; cell number in a snap. A lookup table.
-           OffsetGrid:
-           .db 0 0 0 8 0 16 0 24 0 32 0 40 0 48 0 56
-           .db 8 0 8 8 8 16 8 24 8 32 8 40 8 48 8 56
-           .db 16 0 16 8 16 16 16 24 16 32 16 40 16 48 16 56
-           .db 24 0 24 8 24 16 24 24 24 32 24 40 24 48 24 56
-           .db 32 0 32 8 32 16 32 24 32 32 32 40 32 48 32 56
-           .db 40 0 40 8 40 16 40 24 40 32 40 40 40 48 40 56
-           .db 48 0 48 8 48 16 48 24 48 32 48 40 48 48 48 56
-           .db 56 0 56 8 56 16 56 24 56 32 56 40 56 48 56 56
 
