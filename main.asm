@@ -276,7 +276,7 @@ _1:        ; Run level.
 
            ld a,(Arthur_Timer)
            inc a
-           cp 20
+           cp 12
            jp nz,++
            ld a,(Arthur_FrameNumber)
            cp 3
@@ -284,11 +284,10 @@ _1:        ; Run level.
            ld a,$ff
         +: inc a
            ld (Arthur_FrameNumber),a
-           xor a
            ld a,(Arthur_Status)
            set 0,a
            ld (Arthur_Status),a
-
+           xor a
        ++: ld (Arthur_Timer),a
 
            ; Switch according to frame number
