@@ -511,7 +511,7 @@ _8:
 
 ; Outiblock
 OutiBlock:
-           .rept 32*32
+           .rept 12*32
            outi
            .endr
            ret
