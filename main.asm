@@ -182,11 +182,9 @@ _1:        ; Run level.
            ld ix,Arthur_FrameDataPointer
            ld h,(ix+1)
            ld l,(ix+0)
-debug:     ; nedenstående er for omfattende!!!!!!!!
-           ld bc,8 * 32   ; load 32 sprites no matter what...!
-                          ; 8 tiles loaded from line 195 takes to line 250!!!
-                          ; 1 tile tager ca. 7 linjer at loade!
-           call LoadVRAM
+debug:
+           ld c,$be
+           call OutiBlock ; swirling fast outiblock
         +:
 
            ; Enable display.
@@ -511,6 +509,12 @@ _8:
            SFX_Wall: .incbin "Sfx\Wall.psg"
            Intergalactic: .incbin "Music\Intergalactic.psg"
 
+; Outiblock
+OutiBlock:
+           .rept 32*32
+           outi
+           .endr
+           ret
 ReleaseNotes:
            .db "Another take on this classic Capcom game. "
            .db "Not so square!" 0
