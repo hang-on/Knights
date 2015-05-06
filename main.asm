@@ -2,7 +2,7 @@
            .sdsctag 0.1, "Knights", ReleaseNotes, "Anders S. Jensen"
 
 ; Organize read only memory:
-           ; Three rom slots a' 16K. Assume standard Sega mapper with 
+           ; Three rom slots a' 16K. Assume standard Sega mapper with
            ; bankswitching in slot 2.
            .memorymap
            defaultslot 0
@@ -20,6 +20,11 @@
            banksize $4000
            banks 4
            .endro
+
+; Define constants:
+           .equ OUTI_32 $4160
+
+
 
 ; Organize variables:
            ; Variables are reset to 0 as part of the general memory
@@ -187,7 +192,8 @@ _1:        ; Run level.
            ld hl,$3f00
            call PrepareVRAM
            ld hl,SATBuffer
-           call TurboLoad32
+           ld c,$be
+           call OUTI_32
 
            ; Load 32 hwsprites' horizontal positions and charcodes.
            ld hl,$3f80
@@ -325,7 +331,7 @@ _WalkingRight_Frame3:
            jp _EndFrame
 
 _EndFrame:
-           ; HL points to the frame's data block, so we need to load Arthur's 
+           ; HL points to the frame's data block, so we need to load Arthur's
            ; coordinates into DE (UpdateArthur expects this, along with HL).
            ld a,(Arthur_X)
            ld d,a
