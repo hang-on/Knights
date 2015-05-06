@@ -114,6 +114,36 @@ Frame data block format
            ArthurWalking_Frame1_Tiles:
            .include "Arthur\ArthurWalking_Frame1_Tiles.inc"
 
+           ArthurWalking_Frame2_Offset:
+           .db 00 00
+           ArthurWalking_Frame2_Layout:
+           .db %00100000
+           .db %01100000
+           .db %01111100
+           .db %01111100
+           .db %01110000
+           .db %11110000
+           .db %11111000
+           .db %00000000
+           ArthurWalking_Frame2_Tiles:
+           .include "Arthur\ArthurWalking_Frame2_Tiles.inc"
+
+           ArthurWalking_Frame3_Offset:
+           .db 00 00
+           ArthurWalking_Frame3_Layout:
+           .db %01100000
+           .db %11100000
+           .db %11100000
+           .db %11110000
+           .db %11111000
+           .db %01100000
+           .db %11100000
+           .db %00000000
+           ArthurWalking_Frame3_Tiles:
+           .include "Arthur\ArthurWalking_Frame3_Tiles.inc"
+
+
+
 ; -----------------------------------------------------------------------------
 
 

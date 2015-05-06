@@ -170,6 +170,7 @@ _0:        ; Initialize level.
 
 _1:        ; Run level.
 
+
            ; See if Arthur wants us to load some new tiles.
            ld a,(Arthur_Status)
            bit 0,a
@@ -181,8 +182,10 @@ _1:        ; Run level.
            ld ix,Arthur_FrameDataPointer
            ld h,(ix+1)
            ld l,(ix+0)
-
-           ld bc,32 * 32   ; load 32 sprites no matter what...!
+debug:     ; nedenstående er for omfattende!!!!!!!!
+           ld bc,8 * 32   ; load 32 sprites no matter what...!
+                          ; 8 tiles loaded from line 195 takes to line 250!!!
+                          ; 1 tile tager ca. 7 linjer at loade!
            call LoadVRAM
         +:
 
@@ -222,6 +225,7 @@ _8:
 ; -----------------------------------------------------------------------------
 Arthur:
 
+
            ; Switch according to game state.
            ld a,(Hub_GameState)
            ld de,_SwitchVectors
@@ -237,11 +241,7 @@ _0:        ; Initialize level.
            ; Point to frame (testing)
            ld hl,ArthurWalking_Frame0_Tiles
            ld de,Arthur_FrameDataPointer
-           ld a,l
-           ld (de),a
-           ld a,h
-           inc de
-           ld (de),a
+           call CopyHL2DE
            ret
 
 _1:        ; Run level.
@@ -271,13 +271,91 @@ _1:        ; Run level.
            inc (hl)
         +:
 
+           ld hl,SATBuffer ; clear buffer
+           ld bc,32+64
+           ld a,0
+           call FillMemory
+
+           ld a,(Arthur_Timer)
+           inc a
+           cp 20
+           jp nz,++
+           ld a,(Arthur_FrameNumber)
+           cp 3
+           jp nz, +
+           ld a,$ff
+        +: inc a
+           ld (Arthur_FrameNumber),a
+           xor a
+           ld a,(Arthur_Status)
+           set 0,a
+           ld (Arthur_Status),a
+
+       ++: ld (Arthur_Timer),a
+
+           ; Switch according to frame number
+           ld a,(Arthur_FrameNumber)
+           ld de,_ArthurFrames
+           call GetVector
+           jp (hl)
+
+_Frame0:
            ; Update the player sprite in the sprite buffer.
+           ld hl,ArthurWalking_Frame0_Tiles
+           ld de,Arthur_FrameDataPointer
+           call CopyHL2DE
            ld hl,ArthurWalking_Frame0_Offset
            ld a,(Arthur_X)
            ld d,a
            ld a,(Arthur_Y)
            ld e,a
            call UpdateArthur
+           jp _EndFrame
+_Frame1:
+           ; Update the player sprite in the sprite buffer.
+           ld hl,ArthurWalking_Frame1_Tiles
+           ld de,Arthur_FrameDataPointer
+           call CopyHL2DE
+           ld hl,ArthurWalking_Frame1_Offset
+           ld a,(Arthur_X)
+           ld d,a
+           ld a,(Arthur_Y)
+           ld e,a
+           call UpdateArthur
+           jp _EndFrame
+
+_Frame2:
+           ; Update the player sprite in the sprite buffer.
+           ld hl,ArthurWalking_Frame2_Tiles
+           ld de,Arthur_FrameDataPointer
+           call CopyHL2DE
+           ld hl,ArthurWalking_Frame2_Offset
+           ld a,(Arthur_X)
+           ld d,a
+           ld a,(Arthur_Y)
+           ld e,a
+           call UpdateArthur
+           jp _EndFrame
+
+_Frame3:
+
+           ; Update the player sprite in the sprite buffer.
+           ld hl,ArthurWalking_Frame3_Tiles
+           ld de,Arthur_FrameDataPointer
+           call CopyHL2DE
+           ld hl,ArthurWalking_Frame3_Offset
+           ld a,(Arthur_X)
+           ld d,a
+           ld a,(Arthur_Y)
+           ld e,a
+           call UpdateArthur
+           jp _EndFrame
+
+_EndFrame:
+
+
+
+
            ret
 _2:
 _3:
@@ -289,7 +367,7 @@ _8:
 
            ret
            _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6 _7 _8
-
+           _ArthurFrames: .dw _Frame0 _Frame1 _Frame2 _Frame3
 UpdateArthur:
            ; Update the sprite representing a game object (i.e. the player).
            ; HL = pointer to frame data block (offsets, layout, tiles).

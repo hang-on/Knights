@@ -100,6 +100,20 @@ WaitForFrameInterrupt:
 .ends
 
 ; --------------------------------------------------------------
+.section "Point DE to value in HL" free
+; --------------------------------------------------------------
+; The 16-bit value in HL is copied LSB to DE. This makes it possible to point 
+; HL to an address, and then 'save' this pointer in the ram location that is 
+; DE.
+CopyHL2DE:
+           ld a,l
+           ld (de),a
+           ld a,h
+           inc de
+           ld (de),a
+           ret
+.ends
+; --------------------------------------------------------------
 .section "Read Joysticks" free
 ; --------------------------------------------------------------
 ; READ JOYSTICKS.
