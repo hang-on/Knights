@@ -36,7 +36,7 @@
            Arthur_X db
            Arthur_Y db
            Arthur_FrameNumber db
-           Arthur_FrameDataPointer dw
+           Arthur_TilePointer dw
            Arthur_Timer db
            Arthur_GridX db
            Arthur_GridY db
@@ -169,29 +169,20 @@ _0:        ; Initialize level.
 
 
 _1:        ; Run level.
-
-
            ; See if Arthur wants us to load some new tiles.
            ld a,(Arthur_Status)
            bit 0,a
            jp z,+
-
-           ; Load tiles at Arthur_FrameDataPointer.
-           ld hl,$2020
+           ; Load request from Arthur! Prepare vram for new Arthur tiles.
+           ld hl,$2020     ; Arthur's 12 tiles are @ 257-269 in the bank.
            call PrepareVRAM
-           ld ix,Arthur_FrameDataPointer
+           ; Setup HL to point to the relevant block of tiles to load.
+           ld ix,Arthur_TilePointer
            ld h,(ix+1)
            ld l,(ix+0)
-debug:
            ld c,$be
-           call OutiBlock ; swirling fast outiblock
+           call OutiBlock ; Invoke the full, swirling fast outiblock.
         +:
-
-           ; Enable display.
-           ld a,%11100000
-           ld b,1
-           call SetRegister
-
            ; Load 32 hwsprites' vertical positions.
            ld hl,$3f00
            call PrepareVRAM
@@ -203,6 +194,11 @@ debug:
            call PrepareVRAM
            ld hl,SATBuffer+32
            call TurboLoad64
+
+           ; Enable display.
+           ld a,%11100000
+           ld b,1
+           call SetRegister
 
            ret
 
@@ -238,7 +234,7 @@ _0:        ; Initialize level.
 
            ; Point to frame (testing)
            ld hl,ArthurWalking_Frame0_Tiles
-           ld de,Arthur_FrameDataPointer
+           ld de,Arthur_TilePointer
            call CopyHL2DE
            ret
 
@@ -302,41 +298,40 @@ _1:        ; Run level.
 
 _WalkingRight_Frame0:
            ld hl,ArthurWalking_Frame0_Tiles
-           ld de,Arthur_FrameDataPointer
+           ld de,Arthur_TilePointer
            call CopyHL2DE
            ld hl,ArthurWalking_Frame0_Offset
            jp _EndFrame
 
 _WalkingRight_Frame1:
            ld hl,ArthurWalking_Frame1_Tiles
-           ld de,Arthur_FrameDataPointer
+           ld de,Arthur_TilePointer
            call CopyHL2DE
            ld hl,ArthurWalking_Frame1_Offset
            jp _EndFrame
 
 _WalkingRight_Frame2:
            ld hl,ArthurWalking_Frame2_Tiles
-           ld de,Arthur_FrameDataPointer
+           ld de,Arthur_TilePointer
            call CopyHL2DE
            ld hl,ArthurWalking_Frame2_Offset
            jp _EndFrame
 
 _WalkingRight_Frame3:
            ld hl,ArthurWalking_Frame3_Tiles
-           ld de,Arthur_FrameDataPointer
+           ld de,Arthur_TilePointer
            call CopyHL2DE
            ld hl,ArthurWalking_Frame3_Offset
            jp _EndFrame
 
 _EndFrame:
+           ; HL points to the frame's data block, so we need to load Arthur's 
+           ; coordinates into DE (UpdateArthur expects this, along with HL).
            ld a,(Arthur_X)
            ld d,a
            ld a,(Arthur_Y)
            ld e,a
            call UpdateArthur
-
-
-
 
            ret
 _2:
