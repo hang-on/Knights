@@ -161,7 +161,7 @@ _0:        ; Initialize level.
            ld hl,$c010
            call PrepareVRAM
            ld hl,SpritePalette
-           ld bc,11
+           ld bc,2
            call LoadVRAM
 
 
