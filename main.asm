@@ -21,10 +21,9 @@
            banks 4
            .endro
 
-; Define constants:
-           .equ OUTI_32 $4160
-
-
+; Define constants for outiblock calls:
+           .equ OUTI_32 $4300-32*2 ; end of block - 32 x outi (2 bytes each).
+           .equ OUTI_64 $4300-64*2 ; end of block - 64 x outi (2 bytes each).
 
 ; Organize variables:
            ; Variables are reset to 0 as part of the general memory
@@ -169,9 +168,7 @@ _0:        ; Initialize level.
            ld bc,2
            call LoadVRAM
 
-
            ret
-
 
 _1:        ; Run level.
            ; See if Arthur wants us to load some new tiles.
@@ -199,7 +196,8 @@ _1:        ; Run level.
            ld hl,$3f80
            call PrepareVRAM
            ld hl,SATBuffer+32
-           call TurboLoad64
+           ld c,$be
+           call OUTI_64
 
            ; Enable display.
            ld a,%11100000
@@ -478,7 +476,7 @@ _8:
 .bank 1 slot 1
 .orga $4000
 OutiBlock:
-           .rept 12*32     ; 384 bytes.
+           .rept 12*32     ; 384 bytes (12 tiles / 6 full name table rows).
            outi
            .endr
            ret
