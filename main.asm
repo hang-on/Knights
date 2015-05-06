@@ -26,7 +26,7 @@
            ; initialization.
            .enum $c000 export
            SATBuffer dsb 32 + 64
-           
+
            FrameInterruptFlag db
            VDPStatus db
            Joystick1 db
@@ -113,7 +113,7 @@ InitializeFramework:
 
            ; Set the border color.
            ld a,%11110001
-           ld b,7
+           ld b,2
            call SetRegister
 
            ; Start main loop in state 0.
@@ -470,6 +470,14 @@ _8:
 
 ; -----------------------------------------------------------------------------
 .bank 1 slot 1
+.orga $4000
+OutiBlock:
+           .rept 12*32     ; 384 bytes.
+           outi
+           .endr
+           ret
+
+
 .section "Bank 1: Music, sfx and misc." free
 
 ; Pre-computed (vpos,hpos) offset values to be used with frame layout tables,
@@ -489,12 +497,6 @@ _8:
            SFX_Wall: .incbin "Sfx\Wall.psg"
            Intergalactic: .incbin "Music\Intergalactic.psg"
 
-; Outiblock
-OutiBlock:
-           .rept 12*32
-           outi
-           .endr
-           ret
 ReleaseNotes:
            .db "Another take on this classic Capcom game. "
            .db "Not so square!" 0
