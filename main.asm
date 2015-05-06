@@ -227,13 +227,10 @@ _8:
            _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6 _7 _8
 .ends
 
-
 ; -----------------------------------------------------------------------------
 .section "Arthur" free
 ; -----------------------------------------------------------------------------
 Arthur:
-
-
            ; Switch according to game state.
            ld a,(Hub_GameState)
            ld de,_SwitchVectors
@@ -254,6 +251,10 @@ _1:        ; Run level.
            ld a,(Arthur_Status)
            and %11111110   ; reset Loader flag.
            ld (Arthur_Status),a
+           
+           ; Reset ArthurState to Standing.
+           xor a
+           ld (Arthur_State),a
 
            ; Update Arthur's x,y coordinates, based on joystick input.
            ld a,(Joystick1)
@@ -261,19 +262,35 @@ _1:        ; Run level.
            jp nz,+
            ld hl,Arthur_X
            dec (hl)
+           scf
         +: bit 3,a
            jp nz,+
            ld hl,Arthur_X
            inc (hl)
+           scf
         +: bit 0,a
            jp nz,+
            ld hl,Arthur_Y
            dec (hl)
+           scf
         +: bit 1,a
            jp nz,+
            ld hl,Arthur_Y
            inc (hl)
+           scf
         +:
+           ; If Arthur has moved, carry flag is set, and we update Arthur's 
+           ; state variable in ram (Arthur_State).
+           jp nc,+
+           ld a,1
+           ld (Arthur_State),a
+         +:
+         
+           ; Temporary! Do only proceed if Arthur moves...
+           ld a,(Arthur_State)
+           cp 0
+           ret z
+
 
            ; Clear SAT buffer
            ld hl,SATBuffer
@@ -284,7 +301,7 @@ _1:        ; Run level.
            ; Check Arthur's timer.
            ld a,(Arthur_Timer)
            inc a
-           cp 12
+           cp 10
            jp nz,++
            ld a,(Arthur_FrameNumber)
            cp 3
