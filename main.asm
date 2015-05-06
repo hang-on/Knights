@@ -21,7 +21,8 @@
            banks 4
            .endro
 
-; Define constants for outiblock calls:
+; Define constants:
+            ; For outiblock calls.
            .equ OUTI_32 $4300-32*2 ; end of block - 32 x outi (2 bytes each).
            .equ OUTI_64 $4300-64*2 ; end of block - 64 x outi (2 bytes each).
 
@@ -66,6 +67,15 @@
            im 1
            ld sp,$dff0
            jp InitializeFramework
+
+.orga $0020
+; Prepare vram at HL (to be called with rst):
+           ld a,l
+           out ($bf),a
+           ld a,h
+           or $40
+           out ($bf),a
+           ret
 
 .orga $0038
 ; Frame interrupt handler:
@@ -163,7 +173,7 @@ _0:        ; Initialize level.
 
            ; Load sprite colors into bank 2.
            ld hl,$c010
-           call PrepareVRAM
+           rst $20
            ld hl,SpritePalette
            ld bc,2
            call LoadVRAM
@@ -177,7 +187,7 @@ _1:        ; Run level.
            jp z,+
            ; Load request from Arthur! Prepare vram for new Arthur tiles.
            ld hl,$2020     ; Arthur's 12 tiles are @ 257-269 in the bank.
-           call PrepareVRAM
+           rst $20         ; Prepare VRAM at index 257.
            ; Setup HL to point to the relevant block of tiles to load.
            ld ix,Arthur_TilePointer
            ld h,(ix+1)
@@ -187,14 +197,14 @@ _1:        ; Run level.
         +:
            ; Load 32 hwsprites' vertical positions.
            ld hl,$3f00
-           call PrepareVRAM
+           rst $20
            ld hl,SATBuffer
            ld c,$be
            call OUTI_32
 
            ; Load 32 hwsprites' horizontal positions and charcodes.
            ld hl,$3f80
-           call PrepareVRAM
+           rst $20
            ld hl,SATBuffer+32
            ld c,$be
            call OUTI_64
