@@ -269,11 +269,13 @@ _1:        ; Run level.
            inc (hl)
         +:
 
-           ld hl,SATBuffer ; clear buffer
+           ; Clear SAT buffer
+           ld hl,SATBuffer
            ld bc,32+64
            ld a,0
            call FillMemory
 
+           ; Check Arthur's timer.
            ld a,(Arthur_Timer)
            inc a
            cp 12
@@ -282,12 +284,14 @@ _1:        ; Run level.
            cp 3
            jp nz, +
            ld a,$ff
-        +: inc a
+        +: ; Timer expired - set new frame number, and signal to Loader.
+           inc a
            ld (Arthur_FrameNumber),a
            ld a,(Arthur_Status)
            set 0,a
            ld (Arthur_Status),a
            xor a
+           ; Put updated timer value back into variable.
        ++: ld (Arthur_Timer),a
 
            ; Switch according to frame number
@@ -296,59 +300,40 @@ _1:        ; Run level.
            call GetVector
            jp (hl)
 
-_Frame0:
-           ; Update the player sprite in the sprite buffer.
+_WalkingRight_Frame0:
            ld hl,ArthurWalking_Frame0_Tiles
            ld de,Arthur_FrameDataPointer
            call CopyHL2DE
            ld hl,ArthurWalking_Frame0_Offset
-           ld a,(Arthur_X)
-           ld d,a
-           ld a,(Arthur_Y)
-           ld e,a
-           call UpdateArthur
            jp _EndFrame
-_Frame1:
-           ; Update the player sprite in the sprite buffer.
+
+_WalkingRight_Frame1:
            ld hl,ArthurWalking_Frame1_Tiles
            ld de,Arthur_FrameDataPointer
            call CopyHL2DE
            ld hl,ArthurWalking_Frame1_Offset
-           ld a,(Arthur_X)
-           ld d,a
-           ld a,(Arthur_Y)
-           ld e,a
-           call UpdateArthur
            jp _EndFrame
 
-_Frame2:
-           ; Update the player sprite in the sprite buffer.
+_WalkingRight_Frame2:
            ld hl,ArthurWalking_Frame2_Tiles
            ld de,Arthur_FrameDataPointer
            call CopyHL2DE
            ld hl,ArthurWalking_Frame2_Offset
-           ld a,(Arthur_X)
-           ld d,a
-           ld a,(Arthur_Y)
-           ld e,a
-           call UpdateArthur
            jp _EndFrame
 
-_Frame3:
-
-           ; Update the player sprite in the sprite buffer.
+_WalkingRight_Frame3:
            ld hl,ArthurWalking_Frame3_Tiles
            ld de,Arthur_FrameDataPointer
            call CopyHL2DE
            ld hl,ArthurWalking_Frame3_Offset
+           jp _EndFrame
+
+_EndFrame:
            ld a,(Arthur_X)
            ld d,a
            ld a,(Arthur_Y)
            ld e,a
            call UpdateArthur
-           jp _EndFrame
-
-_EndFrame:
 
 
 
@@ -364,7 +349,8 @@ _8:
 
            ret
            _SwitchVectors: .dw _0 _1 _2 _3 _4 _5 _6 _7 _8
-           _ArthurFrames: .dw _Frame0 _Frame1 _Frame2 _Frame3
+           _ArthurFrames: .dw _WalkingRight_Frame0 _WalkingRight_Frame1
+                          .dw _WalkingRight_Frame2 _WalkingRight_Frame3
 UpdateArthur:
            ; Update the sprite representing a game object (i.e. the player).
            ; HL = pointer to frame data block (offsets, layout, tiles).
