@@ -75,7 +75,7 @@
            ld a,h
            or $40
            out ($bf),a
-           ret
+           ret             ; whew, tight! One spare byte up to int. handler.
 
 .orga $0038
 ; Frame interrupt handler:
@@ -246,10 +246,6 @@ _0:        ; Initialize level.
            ld (Arthur_X),a
            ld (Arthur_Y),a
 
-           ; Point to frame (testing)
-           ld hl,ArthurWalking_Frame0_Tiles
-           ld de,Arthur_TilePointer
-           call CopyHL2DE
            ret
 
 _1:        ; Run level.
